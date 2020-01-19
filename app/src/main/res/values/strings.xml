@@ -12,6 +12,14 @@
     <string name="delete_button_label">Usuń</string>
     <string name="default_dataset_element_title">default_dataset_element_title</string>
     <string name="default_dataset_element_value">default_dataset_element_value</string>
+    <string name="data_set_hint">Podaj tytuł zestawu</string>
+    <string name="data_set_prefix_hint">Podaj prefix zestawu</string>
+    <string name="add_button_label">Dodaj</string>
+    <string name="cancel_button_label">Anuluj</string>
+    <string name="new_data_set_dialog_title">Nowy zestaw</string>
+    <string name="new_data_set_element_dialog_title">Nowy element zestawu</string>
+    <string name="data_set_element_value_hint">Podaj wartość elementu</string>
+    <string name="data_set_element_title_hint">Podaj tytuł</string>
 
 
 </resources>

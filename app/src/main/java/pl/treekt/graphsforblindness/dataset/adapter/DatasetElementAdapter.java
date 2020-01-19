@@ -11,13 +11,13 @@ import pl.treekt.graphsforblindness.R;
 import pl.treekt.graphsforblindness.database.dao.DataSetElementDao;
 import pl.treekt.graphsforblindness.database.entity.DataSet;
 import pl.treekt.graphsforblindness.database.entity.DataSetElement;
-import pl.treekt.graphsforblindness.observable.Observer;
-import pl.treekt.graphsforblindness.observable.event.DataChangeEvent;
+import pl.treekt.graphsforblindness.dataset.observable.Listener;
+import pl.treekt.graphsforblindness.dataset.observable.event.SelectionEvent;
 
 import java.util.ArrayList;
 
 
-public class DatasetElementAdapter extends BaseAdapter implements Observer {
+public class DatasetElementAdapter extends BaseAdapter implements Listener.OnSelectedListener {
 
     private ArrayList<DataSetElement> dataSetElements;
     private LayoutInflater layoutInflater;
@@ -54,9 +54,9 @@ public class DatasetElementAdapter extends BaseAdapter implements Observer {
     }
 
     @Override
-    @SuppressLint({"ViewHolder", "InflateParams"})
+    @SuppressLint({"ViewHolder", "InflateParams", "SetTextI18n"})
     public View getView(int position, View view, ViewGroup parent) {
-        view = layoutInflater.inflate(R.layout.dataset_elements_list_item, null);
+        view = layoutInflater.inflate(R.layout.layout_dataset_elements_list_item, null);
 
         DataSetElement datasetElement = dataSetElements.get(position);
 
@@ -66,7 +66,7 @@ public class DatasetElementAdapter extends BaseAdapter implements Observer {
         Button deleteButton = view.findViewById(R.id.dataset_element_delete_button);
 
         datasetElementTitle.setText(datasetElement.getTitle());
-        datasetElementValue.setText(datasetElement.getValue());
+        datasetElementValue.setText(datasetElement.getValue().toString());
         deleteButton.setOnClickListener(v -> deleteDataSetElement(position));
 
         return view;
@@ -84,7 +84,9 @@ public class DatasetElementAdapter extends BaseAdapter implements Observer {
     }
 
     @Override
-    public void update(DataChangeEvent event) {
+    public void update(SelectionEvent event) {
         setSelectedDataSet((DataSet) event.getData());
     }
+
+
 }

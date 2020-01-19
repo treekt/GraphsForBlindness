@@ -1,10 +1,10 @@
-package pl.treekt.graphsforblindness.observable.event;
+package pl.treekt.graphsforblindness.dataset.observable.event;
 
-public class DataChangeEvent {
+public class SelectionEvent {
 
     private Object data;
 
-    public DataChangeEvent(Object data) {
+    public SelectionEvent(Object data) {
         this.data = data;
     }
 

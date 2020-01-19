@@ -11,15 +11,16 @@ import pl.treekt.graphsforblindness.R;
 import pl.treekt.graphsforblindness.database.dao.DataSetDao;
 import pl.treekt.graphsforblindness.database.dao.DataSetElementDao;
 import pl.treekt.graphsforblindness.database.entity.DataSet;
-import pl.treekt.graphsforblindness.observable.Observable;
-import pl.treekt.graphsforblindness.observable.Observer;
-import pl.treekt.graphsforblindness.observable.event.DataChangeEvent;
+import pl.treekt.graphsforblindness.dataset.observable.Observable;
+import pl.treekt.graphsforblindness.dataset.observable.Listener;
+import pl.treekt.graphsforblindness.dataset.observable.event.SelectionEvent;
 
 import java.util.ArrayList;
 
 public class DatasetAdapter extends BaseAdapter implements Observable {
 
-    private ArrayList<Observer> observers;
+    private ArrayList<Listener.OnSelectedListener> onSelectedListeners;
+    private ArrayList<Listener.OnChangeListener> onChangeListeners;
 
     private ArrayList<DataSet> dataSets;
     private LayoutInflater layoutInflater;
@@ -32,7 +33,8 @@ public class DatasetAdapter extends BaseAdapter implements Observable {
     public DatasetAdapter(LayoutInflater layoutInflater) {
         this.layoutInflater = layoutInflater;
 
-        observers = new ArrayList<>();
+        onSelectedListeners = new ArrayList<>();
+        onChangeListeners = new ArrayList<>();
 
         this.dataSetDao = new DataSetDao();
         this.dataSetElementDao = new DataSetElementDao();
@@ -41,7 +43,13 @@ public class DatasetAdapter extends BaseAdapter implements Observable {
 
     public void reloadData() {
         dataSets = dataSetDao.readAll();
+        if(getCount() > 0) {
+            setSelectedDataSetAtPosition(0);
+        }else {
+            this.selectedDataSet = null;
+        }
         notifyDataSetChanged();
+        notifyOnChangeListeners();
     }
 
     @Override
@@ -62,7 +70,7 @@ public class DatasetAdapter extends BaseAdapter implements Observable {
     @Override
     @SuppressLint({"ViewHolder", "InflateParams"})
     public View getView(int position, View view, ViewGroup parent) {
-        view = layoutInflater.inflate(R.layout.dataset_list_item_layout, null);
+        view = layoutInflater.inflate(R.layout.layout_dataset_list_item, null);
 
         DataSet dataset = dataSets.get(position);
 
@@ -85,29 +93,47 @@ public class DatasetAdapter extends BaseAdapter implements Observable {
         dataSetElementDao.deleteAllByDataSetId(dataSet.getId());
         dataSetDao.delete(dataSet.getId());
         reloadData();
-        setSelectedDataSetAtPosition(0);
     }
 
     public void setSelectedDataSetAtPosition(int position) {
-        if(dataSets.size() == 0) return;
+        if(getCount() == 0) return;
 
         this.selectedDataSet = dataSets.get(position);
-        notifyObservers();
+        notifyOnSelectedListeners();
     }
 
-
-    @Override
-    public void attach(Observer observer) {
-        observers.add(observer);
-    }
-
-    @Override
-    public void detach(Observer observer) {
-        observers.remove(observer);
+    public DataSet getSelectedDataSet() {
+        return selectedDataSet;
     }
 
     @Override
-    public void notifyObservers() {
-        observers.forEach(observer -> observer.update(new DataChangeEvent(selectedDataSet)));
+    public void setOnSelectedListener(Listener.OnSelectedListener listener) {
+        onSelectedListeners.add(listener);
     }
+
+    public void setOnChangeListener(Listener.OnChangeListener listener) {
+        onChangeListeners.add(listener);
+    }
+
+    @Override
+    public void detachOnSelectedListener(Listener.OnSelectedListener listener) {
+        onSelectedListeners.remove(listener);
+    }
+
+    @Override
+    public void detachOnChangeListener(Listener.OnChangeListener listener) {
+        onSelectedListeners.remove(listener);
+    }
+
+    @Override
+    public void notifyOnSelectedListeners() {
+        onSelectedListeners.forEach(listener -> listener.update(new SelectionEvent(selectedDataSet)));
+    }
+
+    @Override
+    public void notifyOnChangeListeners() {
+        onChangeListeners.forEach(Listener.OnChangeListener::update);
+    }
+
+
 }

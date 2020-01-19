@@ -8,11 +8,17 @@
         android:layout_margin="8dp"
         tools:context=".dataset.DatasetActivity">
 
+    <Button
+            android:id="@+id/new_dataset_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/new_dataset_label"/>
     <TextView
             android:id="@+id/datasets_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/datasets_text"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="3dp"
     />
     <ListView
@@ -20,28 +26,28 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
     />
-    <Button
-            android:id="@+id/new_dataset_button"
+    <LinearLayout
+            android:id="@+id/data_set_elements_list_section"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/new_dataset_label"/>
-
-
-    <TextView
-            android:id="@+id/dataset_elements_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/dataset_elements_text"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="3dp"
-    />
-    <ListView
-            android:id="@+id/dataset_elements_list"
-            android:layout_width="match_parent"
-            android:layout_height="360dp"/>
-    <Button
-            android:id="@+id/new_data_element_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/new_dataset_element_button_label"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+    >
+        <Button
+                android:id="@+id/new_data_element_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/new_dataset_element_button_label"/>
+        <TextView
+                android:id="@+id/dataset_elements_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/dataset_elements_text"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="3dp"
+        />
+        <ListView
+                android:id="@+id/dataset_elements_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+    </LinearLayout>
 </LinearLayout>
