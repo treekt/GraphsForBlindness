@@ -30,4 +30,18 @@
             android:text="@string/show_graph_button_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+    >
+        <Button
+                android:id="@+id/open_dataset_form_button"
+                android:text="@string/add_new_data_set_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="25dp"
+        />
+    </LinearLayout>
 </LinearLayout>

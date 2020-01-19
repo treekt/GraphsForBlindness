@@ -1,7 +1,17 @@
 <resources>
     <string name="app_name">GraphsForBlindness</string>
     <string name="show_graph_button_label">Wyświetl wykres</string>
-
+    <string name="add_new_data_set_label">Dodaj nowy zestaw danych</string>
+    <string name="new_dataset_label">Dodaj nowy zestaw</string>
+    <string name="new_dataset_element_button_label">Dodaj nową pozycje</string>
+    <string name="dataset_elements_text">Pozycje w zestawie</string>
+    <string name="datasets_text">Zestawy danych</string>
+    <string name="default_dataset_title">default_dataset_title</string>
+    <string name="default_dataset_prefix">default_dataset_prefix</string>
+    <string name="update_button_label">Zmień</string>
+    <string name="delete_button_label">Usuń</string>
+    <string name="default_dataset_element_title">default_dataset_element_title</string>
+    <string name="default_dataset_element_value">default_dataset_element_value</string>
 
 
 </resources>

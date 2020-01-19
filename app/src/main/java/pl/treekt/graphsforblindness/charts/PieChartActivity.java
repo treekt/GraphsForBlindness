@@ -14,6 +14,7 @@ public class PieChartActivity extends GraphActivity {
         pieChart.data(getDataType().getData());
         pieChart.title(getDataType().getTitle());
         pieChart.setOnClickListener(new ChartOnClickListener(getDataType()));
+        pieChart.stroke("5 black");
 
         chartView.setChart(pieChart);
     }
