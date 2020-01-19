@@ -8,14 +8,12 @@
               android:focusable="false"
               android:focusableInTouchMode="false"
 >
-
-
     <TextView
             android:id="@+id/dataset_title_text"
             android:text="@string/default_dataset_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="4"
+            android:layout_weight="3"
             android:clickable="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
@@ -23,9 +21,9 @@
     <TextView
             android:id="@+id/dataset_prefix_text"
             android:text="@string/default_dataset_prefix"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="4"
+            android:layout_weight="3"
             android:clickable="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
@@ -33,13 +31,13 @@
     <Button
             android:id="@+id/dataset_update_button"
             android:text="@string/update_button_label"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="2"/>
     <Button
             android:id="@+id/dataset_delete_button"
             android:text="@string/delete_button_label"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="2"/>
 </LinearLayout>

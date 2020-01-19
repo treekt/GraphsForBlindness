@@ -1,6 +1,7 @@
 package pl.treekt.graphsforblindness.dataset;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
@@ -14,7 +15,6 @@ import pl.treekt.graphsforblindness.database.entity.DataSet;
 import pl.treekt.graphsforblindness.database.entity.DataSetElement;
 import pl.treekt.graphsforblindness.dataset.adapter.DatasetAdapter;
 import pl.treekt.graphsforblindness.dataset.adapter.DatasetElementAdapter;
-import pl.treekt.graphsforblindness.dataset.observable.Listener;
 
 public class DatasetActivity extends AppCompatActivity {
 
@@ -28,6 +28,12 @@ public class DatasetActivity extends AppCompatActivity {
     private ListView dataSetElementsListView;
 
     private LinearLayout dataSetElementsSectionLayout;
+
+    private DataSet editedDataSet;
+    private DataSetElement editedDataSetElement;
+
+    private Dialog editDataSetDialog;
+    private Dialog editDataSetElementDialog;
 
     @Override
     @SuppressLint("InflateParams")
@@ -44,30 +50,40 @@ public class DatasetActivity extends AppCompatActivity {
         dataSetElementsListView = findViewById(R.id.dataset_elements_list);
         dataSetElementsListView.setClickable(true);
         datasetElementAdapter = new DatasetElementAdapter(getLayoutInflater());
+        datasetElementAdapter.setOnClickListener((event) -> {
+            editedDataSetElement = (DataSetElement) event.getData();
+            editDataSetElementDialog.show();
+        });
         dataSetElementsListView.setAdapter(datasetElementAdapter);
 
         dataSetListView = findViewById(R.id.dataset_list);
         dataSetListView.setClickable(true);
         datasetAdapter = new DatasetAdapter(getLayoutInflater());
-        dataSetListView.setAdapter(datasetAdapter);
         datasetAdapter.setOnSelectedListener(datasetElementAdapter);
         datasetAdapter.setOnChangeListener(this::validateDataSets);
+        datasetAdapter.setOnClickListener((event) -> {
+            editedDataSet = (DataSet) event.getData();
+            editDataSetDialog.show();
+        });
+        dataSetListView.setAdapter(datasetAdapter);
 
 
         dataSetListView.setOnItemClickListener((parent, view, position, id) -> {
             datasetAdapter.setSelectedDataSetAtPosition(position);
         });
 
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        prepareDataSetDialog(builder);
-        prepareDataSetElementDialog(builder);
+        prepareNewDataSetDialog(builder);
+        prepareEditDataSetDialog(builder);
+        prepareNewDataSetElementDialog(builder);
+        prepareEditDataSetElementDialog(builder);
+
 
         validateDataSets();
     }
 
     @SuppressLint("InflateParams")
-    private void prepareDataSetDialog(AlertDialog.Builder builder) {
+    private void prepareNewDataSetDialog(AlertDialog.Builder builder) {
         View dataSetDialogView = getLayoutInflater().inflate(R.layout.dialog_data_set, null);
         EditText titleEditText = dataSetDialogView.findViewById(R.id.data_set_title_edit_text);
         EditText prefixEditText = dataSetDialogView.findViewById(R.id.data_set_prefix_edit_text);
@@ -98,6 +114,37 @@ public class DatasetActivity extends AppCompatActivity {
         clearDataSetDialog(titleEditText, prefixEditText);
     }
 
+    @SuppressLint("InflateParams")
+    private void prepareEditDataSetDialog(AlertDialog.Builder builder) {
+        View dataSetDialogView = getLayoutInflater().inflate(R.layout.dialog_data_set, null);
+
+        EditText titleEditText = dataSetDialogView.findViewById(R.id.data_set_title_edit_text);
+        EditText prefixEditText = dataSetDialogView.findViewById(R.id.data_set_prefix_edit_text);
+        editDataSetDialog = builder
+                .setTitle(getString(R.string.edit_data_set_dialog_title))
+                .setView(dataSetDialogView)
+                .setPositiveButton(getString(R.string.edit_button_label), (dialog, which) -> onEditDataSet(
+                        titleEditText,
+                        prefixEditText
+                ))
+                .setNegativeButton(getString(R.string.cancel_button_label),
+                        (dialog, which) -> {
+                            clearDataSetDialog(titleEditText, prefixEditText);
+                            dialog.cancel();
+                        })
+                .create();
+
+    }
+
+    private void onEditDataSet(EditText titleEditText, EditText prefixEditText) {
+        editedDataSet.setTitle(titleEditText.getText().toString());
+        editedDataSet.setPrefix(prefixEditText.getText().toString());
+        dataSetDao.update(editedDataSet);
+        datasetAdapter.reloadData();
+        clearDataSetDialog(titleEditText, prefixEditText);
+    }
+
+
     private void clearDataSetDialog(EditText titleEditText, EditText prefixEditText) {
         titleEditText.setText("");
         prefixEditText.setText("");
@@ -105,7 +152,7 @@ public class DatasetActivity extends AppCompatActivity {
 
 
     @SuppressLint("InflateParams")
-    private void prepareDataSetElementDialog(AlertDialog.Builder builder) {
+    private void prepareNewDataSetElementDialog(AlertDialog.Builder builder) {
         View dataSetElementDialogView = getLayoutInflater().inflate(R.layout.dialog_data_set_element, null);
         EditText titleEditText = dataSetElementDialogView.findViewById(R.id.data_set_element_title_edit_text);
         EditText valueEditText = dataSetElementDialogView.findViewById(R.id.data_set_element_value_edit_text);
@@ -132,6 +179,35 @@ public class DatasetActivity extends AppCompatActivity {
         dataSetElement.setValue(Integer.parseInt(valueEditText.getText().toString()));
         dataSetElement.setDataTypeId(datasetAdapter.getSelectedDataSet().getId());
         dataSetElementDao.save(dataSetElement);
+        datasetElementAdapter.reloadData();
+        clearDataSetElementDialog(titleEditText, valueEditText);
+    }
+
+    @SuppressLint("InflateParams")
+    private void prepareEditDataSetElementDialog(AlertDialog.Builder builder) {
+        View dataSetElementDialogView = getLayoutInflater().inflate(R.layout.dialog_data_set_element, null);
+
+        EditText titleEditText = dataSetElementDialogView.findViewById(R.id.data_set_element_title_edit_text);
+        EditText valueEditText = dataSetElementDialogView.findViewById(R.id.data_set_element_value_edit_text);
+        editDataSetElementDialog = builder
+                .setTitle(getString(R.string.edit_data_set_element_dialog_title))
+                .setView(dataSetElementDialogView)
+                .setPositiveButton(getString(R.string.edit_button_label), (dialog, which) -> onEditDataSetElement(
+                        titleEditText,
+                        valueEditText
+                ))
+                .setNegativeButton(getString(R.string.cancel_button_label), (dialog, which) -> {
+                    clearDataSetElementDialog(titleEditText, valueEditText);
+                    dialog.cancel();
+                })
+                .create();
+    }
+
+    private void onEditDataSetElement(EditText titleEditText, EditText valueEditText) {
+        editedDataSetElement.setTitle(titleEditText.getText().toString());
+        editedDataSetElement.setValue(Integer.parseInt(valueEditText.getText().toString()));
+        editedDataSetElement.setDataTypeId(datasetAdapter.getSelectedDataSet().getId());
+        dataSetElementDao.update(editedDataSetElement);
         datasetElementAdapter.reloadData();
         clearDataSetElementDialog(titleEditText, valueEditText);
     }

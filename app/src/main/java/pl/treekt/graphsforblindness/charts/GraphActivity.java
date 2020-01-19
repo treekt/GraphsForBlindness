@@ -7,10 +7,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.anychart.AnyChartView;
+import com.anychart.chart.common.dataentry.DataEntry;
+import com.anychart.chart.common.dataentry.ValueDataEntry;
 import pl.treekt.graphsforblindness.R;
+import pl.treekt.graphsforblindness.database.dao.DataSetElementDao;
+import pl.treekt.graphsforblindness.database.entity.DataSet;
+import pl.treekt.graphsforblindness.database.entity.DataSetElement;
 import pl.treekt.graphsforblindness.types.DataType;
 import pl.treekt.graphsforblindness.types.GraphType;
 import pl.treekt.graphsforblindness.utils.TextToSpeechManager;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class GraphActivity extends AppCompatActivity {
 
@@ -20,7 +29,11 @@ public abstract class GraphActivity extends AppCompatActivity {
     AnyChartView chartView;
 
     private GraphType graphType;
-    private DataType dataType;
+    private DataSet dataSet;
+
+    private DataSetElementDao dataSetElementDao;
+
+    private ArrayList<DataSetElement> dataSetElements;
 
 
     @Override
@@ -29,8 +42,12 @@ public abstract class GraphActivity extends AppCompatActivity {
         setContentView(R.layout.activity_graph);
         ButterKnife.bind(this);
         textToSpeechManager = new TextToSpeechManager();
+        dataSetElementDao = new DataSetElementDao();
 
         receiveExtras();
+
+        dataSetElements = dataSetElementDao.readAllByDataSetId(dataSet.getId());
+
         prepareChart();
     }
 
@@ -39,9 +56,9 @@ public abstract class GraphActivity extends AppCompatActivity {
     private void receiveExtras() {
         Intent intent = getIntent();
         graphType = (GraphType) intent.getSerializableExtra("graphType");
-        dataType = (DataType) intent.getSerializableExtra("dataType");
+        dataSet = (DataSet) intent.getSerializableExtra("dataSet");
 
-        String message = "Uruchomiono " + graphType.getTitle().toLowerCase() + " z zestawem danych " + dataType.getTitle().toLowerCase();
+        String message = "Uruchomiono " + graphType.getTitle().toLowerCase() + " z zestawem danych " + dataSet.getTitle().toLowerCase();
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
         textToSpeechManager.speak(message);
     }
@@ -58,7 +75,17 @@ public abstract class GraphActivity extends AppCompatActivity {
         return graphType;
     }
 
-    public DataType getDataType() {
-        return dataType;
+    public DataSet getDataSet() {
+        return dataSet;
+    }
+
+    public ArrayList<DataSetElement> getDataSetElements() {
+        return dataSetElements;
+    }
+
+    public ArrayList<DataEntry> getDataEntries(){
+        return dataSetElements.stream()
+                .map(dataSetElement -> new ValueDataEntry(dataSetElement.getTitle(), dataSetElement.getValue()))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 }

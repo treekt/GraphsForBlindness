@@ -8,25 +8,27 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import pl.treekt.graphsforblindness.database.entity.DataSet;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class SpinnerAdapter extends ArrayAdapter<String> {
 
-    public SpinnerAdapter(Context context, ArrayList<String> objects) {
-        super(context, android.R.layout.simple_list_item_1, objects);
+    public SpinnerAdapter(Context context, ArrayList<String> list) {
+        super(context, android.R.layout.simple_list_item_1, list);
     }
+
 
     @Override
     public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View view = super.getDropDownView(position, convertView, parent);
-        TextView tv = (TextView) view;
-        if(position == 0){
+        TextView label = (TextView) view;
+        if (position == 0) {
             // Set the hint text color gray
-            tv.setTextColor(Color.GRAY);
-        }
-        else {
-            tv.setTextColor(Color.BLACK);
+            label.setTextColor(Color.GRAY);
+        } else {
+            label.setTextColor(Color.BLACK);
         }
         return view;
     }
@@ -37,4 +39,6 @@ public class SpinnerAdapter extends ArrayAdapter<String> {
         // First item will be use for hint
         return position != 0;
     }
+
+
 }

@@ -48,14 +48,14 @@ public enum DataType {
     }
 
     public static ArrayList<String> getDataTypesWithHint() {
-        ArrayList<String> graphTypes = new ArrayList<>();
-        graphTypes.add(hint);
-        graphTypes.addAll(Stream.of(values())
+        ArrayList<String> dataTypes = new ArrayList<>();
+        dataTypes.add(hint);
+        dataTypes.addAll(Stream.of(values())
                 .map(DataType::getTitle)
                 .collect(Collectors.toList())
         );
 
-        return graphTypes;
+        return dataTypes;
     }
 
     public List<DataEntry> getData() {

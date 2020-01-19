@@ -10,10 +10,10 @@ public class ColumnChartActivity extends GraphActivity {
     @Override
     public void prepareChart() {
         Cartesian columnChart = AnyChart.column();
-        columnChart.title(getDataType().getTitle());
-        columnChart.setOnClickListener(new ChartOnClickListener(getDataType()));
+        columnChart.title(getDataSet().getTitle());
+        columnChart.setOnClickListener(new ChartOnClickListener(getDataSet()));
 
-        Column series = columnChart.column(getDataType().getData());
+        Column series = columnChart.column(getDataEntries());
         series.stroke("5 black");
 
         chartView.setChart(columnChart);

@@ -20,6 +20,9 @@
     <string name="new_data_set_element_dialog_title">Nowy element zestawu</string>
     <string name="data_set_element_value_hint">Podaj wartość elementu</string>
     <string name="data_set_element_title_hint">Podaj tytuł</string>
+    <string name="edit_button_label">Edytuj</string>
+    <string name="edit_data_set_dialog_title">Edycja zestawu</string>
+    <string name="edit_data_set_element_dialog_title">Edytuj element zestawu</string>
 
 
 </resources>

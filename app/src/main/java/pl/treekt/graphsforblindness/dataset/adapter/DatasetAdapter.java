@@ -1,6 +1,7 @@
 package pl.treekt.graphsforblindness.dataset.adapter;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ public class DatasetAdapter extends BaseAdapter implements Observable {
 
     private ArrayList<Listener.OnSelectedListener> onSelectedListeners;
     private ArrayList<Listener.OnChangeListener> onChangeListeners;
+    private ArrayList<Listener.OnClickListener> onClickListeners;
 
     private ArrayList<DataSet> dataSets;
     private LayoutInflater layoutInflater;
@@ -28,13 +30,16 @@ public class DatasetAdapter extends BaseAdapter implements Observable {
     private DataSetDao dataSetDao;
     private DataSetElementDao dataSetElementDao;
 
+    private int selectedPosition;
     private DataSet selectedDataSet;
+    private DataSet editedDataSet;
 
     public DatasetAdapter(LayoutInflater layoutInflater) {
         this.layoutInflater = layoutInflater;
 
         onSelectedListeners = new ArrayList<>();
         onChangeListeners = new ArrayList<>();
+        onClickListeners = new ArrayList<>();
 
         this.dataSetDao = new DataSetDao();
         this.dataSetElementDao = new DataSetElementDao();
@@ -74,6 +79,10 @@ public class DatasetAdapter extends BaseAdapter implements Observable {
 
         DataSet dataset = dataSets.get(position);
 
+        if(position == selectedPosition) {
+            view.setBackgroundColor(Color.LTGRAY);
+        }
+
         TextView datasetTitle = view.findViewById(R.id.dataset_title_text);
         TextView datasetPrefix = view.findViewById(R.id.dataset_prefix_text);
         Button editButton = view.findViewById(R.id.dataset_update_button);
@@ -82,8 +91,10 @@ public class DatasetAdapter extends BaseAdapter implements Observable {
         datasetTitle.setText(dataset.getTitle());
         datasetPrefix.setText(dataset.getPrefix());
         deleteButton.setOnClickListener(v -> deleteDataSet(position));
-
-        setSelectedDataSetAtPosition(0);
+        editButton.setOnClickListener(v -> {
+            this.editedDataSet = dataSets.get(0);
+            notifyOnClickListener();
+        });
 
         return view;
     }
@@ -98,8 +109,10 @@ public class DatasetAdapter extends BaseAdapter implements Observable {
     public void setSelectedDataSetAtPosition(int position) {
         if(getCount() == 0) return;
 
+        this.selectedPosition = position;
         this.selectedDataSet = dataSets.get(position);
         notifyOnSelectedListeners();
+        notifyDataSetChanged();
     }
 
     public DataSet getSelectedDataSet() {
@@ -111,8 +124,14 @@ public class DatasetAdapter extends BaseAdapter implements Observable {
         onSelectedListeners.add(listener);
     }
 
+    @Override
     public void setOnChangeListener(Listener.OnChangeListener listener) {
         onChangeListeners.add(listener);
+    }
+
+    @Override
+    public void setOnClickListener(Listener.OnClickListener listener) {
+        onClickListeners.add(listener);
     }
 
     @Override
@@ -126,6 +145,11 @@ public class DatasetAdapter extends BaseAdapter implements Observable {
     }
 
     @Override
+    public void detachOnClickListener(Listener.OnClickListener listener) {
+        onClickListeners.remove(listener);
+    }
+
+    @Override
     public void notifyOnSelectedListeners() {
         onSelectedListeners.forEach(listener -> listener.update(new SelectionEvent(selectedDataSet)));
     }
@@ -135,5 +159,8 @@ public class DatasetAdapter extends BaseAdapter implements Observable {
         onChangeListeners.forEach(Listener.OnChangeListener::update);
     }
 
-
+    @Override
+    public void notifyOnClickListener() {
+        onClickListeners.forEach(listener -> listener.onClick(new SelectionEvent(editedDataSet)));
+    }
 }

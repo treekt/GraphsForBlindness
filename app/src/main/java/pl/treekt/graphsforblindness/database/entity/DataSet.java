@@ -1,6 +1,8 @@
 package pl.treekt.graphsforblindness.database.entity;
 
-public class DataSet {
+import java.io.Serializable;
+
+public class DataSet implements Serializable {
 
     private Integer id;
     private String title;
@@ -28,5 +30,10 @@ public class DataSet {
 
     public void setPrefix(String prefix) {
         this.prefix = prefix;
+    }
+
+    @Override
+    public String toString() {
+        return title;
     }
 }

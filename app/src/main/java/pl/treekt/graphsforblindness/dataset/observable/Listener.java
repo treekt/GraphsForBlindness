@@ -12,5 +12,9 @@ public class Listener {
         void update();
     }
 
+    public interface OnClickListener {
+        void onClick(SelectionEvent event);
+    }
+
 
 }

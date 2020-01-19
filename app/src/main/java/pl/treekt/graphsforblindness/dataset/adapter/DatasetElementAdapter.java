@@ -19,15 +19,20 @@ import java.util.ArrayList;
 
 public class DatasetElementAdapter extends BaseAdapter implements Listener.OnSelectedListener {
 
+    private ArrayList<Listener.OnClickListener> onClickListeners;
+
     private ArrayList<DataSetElement> dataSetElements;
     private LayoutInflater layoutInflater;
 
     private DataSetElementDao dataSetElementDao;
 
     private DataSet selectedDataSet;
+    private DataSetElement editedDataSetElement;
 
     public DatasetElementAdapter(LayoutInflater layoutInflater) {
         this.layoutInflater = layoutInflater;
+
+        onClickListeners = new ArrayList<>();
 
         dataSetElementDao = new DataSetElementDao();
         dataSetElements = new ArrayList<>();
@@ -68,6 +73,10 @@ public class DatasetElementAdapter extends BaseAdapter implements Listener.OnSel
         datasetElementTitle.setText(datasetElement.getTitle());
         datasetElementValue.setText(datasetElement.getValue().toString());
         deleteButton.setOnClickListener(v -> deleteDataSetElement(position));
+        editButton.setOnClickListener(v -> {
+            editedDataSetElement = dataSetElements.get(position);
+            notifyOnClickListeners();
+        });
 
         return view;
     }
@@ -88,5 +97,16 @@ public class DatasetElementAdapter extends BaseAdapter implements Listener.OnSel
         setSelectedDataSet((DataSet) event.getData());
     }
 
+    public void setOnClickListener(Listener.OnClickListener listener) {
+        onClickListeners.add(listener);
+    }
+
+    public void detachOnClickListener(Listener.OnClickListener listener) {
+        onClickListeners.remove(listener);
+    }
+
+    public void notifyOnClickListeners() {
+        onClickListeners.forEach(listener -> listener.onClick(new SelectionEvent(editedDataSetElement)));
+    }
 
 }
